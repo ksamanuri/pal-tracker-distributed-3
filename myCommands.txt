@@ -1,0 +1,93 @@
+<<<<<<< HEAD
+--for submission
+./gradlew cloudNativeDeveloperReviewPipeline -PreviewUrl=http://pal-tracker-zany-lynx.apps.evans.pal.pivotal.io
+
+
+cf env pal-tracker
+
+git push pal-tracker
+git status
+p.mysql
+
+
+p.mysql                       db-small          Dedicated instances of MySQL                                                                               dedicated-mysql-broker
+
+cf create-service p.mysql db-small  pal-tracker-my-sql-ins -b dedicated-mysql-broker
+cf service pal-tracker-my-sql-ins
+
+cf bind-service pal-tracker pal-tracker-my-sql-ins
+
+./gradlew ctiveDeveloperDatabaseMigrations -PserverUrl=http://pal-tracker-zany-lynx.apps.evans.pal.pivotal.io
+=======
+--To submit the assignment
+cd ~/workspace/assignment-submission
+./gradlew cloudNativeDeveloperSimpleApp -PserverUrl=http://pal-tracker-shiny-wildebeest.apps.evans.pal.pivotal.io/
+
+
+--Pivotal cloud console
+https://login.sys.evans.pal.pivotal.io/login
+
+--Set an environment variable to tell the buildpack to use Java 11.
+cf set-env pal-tracker JBP_CONFIG_OPEN_JDK_JRE '{ jre: { version: 11.+ } }'
+cf restage pal-tracker
+
+--to push your app to pivotal
+cf push pal-tracker --random-route -p build/libs/pal-tracker.jar
+
+
+-- to set target
+cf api api.sys.evans.pal.pivotal.io
+cf login
+
+or
+
+
+--to gets logs from cli
+cf logs pal-tracker
+>>>>>>> 9ecd3af03fdcb8866c895fd8a26ca30bee59574d
+
+tracker-allocations-database, tracker-backlog-database, tracker-registration-database and tracker-timesheets-database
+
+cf create-service p.mysql db-small  tracker-allocations-database -b dedicated-mysql-broker
+
+cf create-service p.mysql db-small  tracker-backlog-database -b dedicated-mysql-broker
+
+cf create-service p.mysql db-small  tracker-registration-database -b dedicated-mysql-broker
+
+cf create-service p.mysql db-small  tracker-timesheets-database -b dedicated-mysql-broker
+
+====
+
+curl -i -XPOST -H"Content-Type: application/json" localhost:8083/registration -d'{"name": "Pete"}'
+curl -i localhost:8083/users/${USER_ID}
+
+Accounts
+
+curl -i localhost:8083/accounts?ownerId=${USER_ID}
+
+curl -i localhost:8083/accounts?ownerId=2
+
+Projects
+
+curl -i -XPOST -H"Content-Type: application/json" localhost:8083/projects -d"{\"name\": \"Basket Weaving\", \"accountId\": ${ACCOUNT_ID}}"
+curl -i localhost:8083/projects?accountId=${ACCOUNT_ID}
+
+Allocations
+
+curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations -d"{\"projectId\": ${PROJECT_ID}, \"userId\": ${USER_ID}, \"firstDay\": \"2015-05-17\", \"lastDay\": \"2015-05-18\"}"
+curl -i localhost:8081/allocations?projectId=${PROJECT_ID}
+
+curl -i -XPOST -H"Content-Type: application/json" localhost:8081/allocations -d"{\"projectId\": 1, \"userId\": 2, \"firstDay\": \"2015-05-17\", \"lastDay\": \"2015-05-18\"}"
+
+Stories
+
+curl -i -XPOST -H"Content-Type: application/json" localhost:8082/stories -d"{\"projectId\": ${PROJECT_ID}, \"name\": \"Find some reeds\"}"
+curl -i localhost:8082/stories?projectId=${PROJECT_ID}
+
+Time Entries
+
+curl -i -XPOST -H"Content-Type: application/json" localhost:8084/time-entries/ -d"{\"projectId\": ${PROJECT_ID}, \"userId\": ${USER_ID}, \"date\": \"2015-05-17\", \"hours\": 6}"
+curl -i localhost:8084/time-entries?userId=${USER_ID}
+
+==================
+
