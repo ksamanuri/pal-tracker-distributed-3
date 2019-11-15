@@ -7,6 +7,10 @@ cf env pal-tracker
 
 git push pal-tracker
 git status
+git remote add origin-giri https://github.com/sunitaskjpmc/pal-tracker-distributed.git
+git remote remove origin-giri
+
+
 p.mysql
 
 
@@ -56,6 +60,9 @@ cf create-service p.mysql db-small  tracker-registration-database -b dedicated-m
 
 cf create-service p.mysql db-small  tracker-timesheets-database -b dedicated-mysql-broker
 
+cf marketplace
+
+cf create-service p-service-registry standard tracker-service-registry
 ====
 
 curl -i -XPOST -H"Content-Type: application/json" localhost:8083/registration -d'{"name": "Pete"}'
@@ -91,3 +98,28 @@ curl -i localhost:8084/time-entries?userId=${USER_ID}
 
 ==================
 
+./gradlew cloudNativeDeveloperDistributedSystemDeployment \
+    -PregistrationServerUrl=https://registration-pal-distributed.apps.evans.pal.pivotal.io \
+    -PbacklogServerUrl=https://backlog-pal-distributed.apps.evans.pal.pivotal.io \
+    -PallocationsServerUrl=https://allocations-pal-distributed.apps.evans.pal.pivotal.io \
+    -PtimesheetsServerUrl=https://timesheets-pal-distributed.apps.evans.pal.pivotal.io
+
+
+./gradlew cloudNativeDeveloperDistributedSystemWithServiceDiscovery \
+    -PregistrationServerUrl=https://registration-pal-distributed.apps.evans.pal.pivotal.io \
+       -PbacklogServerUrl=https://backlog-pal-distributed.apps.evans.pal.pivotal.io \
+       -PallocationsServerUrl=https://allocations-pal-distributed.apps.evans.pal.pivotal.io \
+       -PtimesheetsServerUrl=https://timesheets-pal-distributed.apps.evans.pal.pivotal.io
+
+
+
+2.0.10-build.3
+
+
+springCloudVersion = Finchley.x
+springCloudServicesClientLibrariesVersion = 2.0.8-build.5
+
+
+apps.evans.pal.pivotal.io
+
+curl https://spring-cloud-broker.apps.evans.pal.pivotal.io/actuator/info
